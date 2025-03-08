@@ -21,16 +21,4 @@ export const defaultTheme = {
     },
     white: '#FFFFFF',
   },
-  fontFamily: {
-    regular: 'NunitonSans_400Regular',
-    bold: 'NunitonSans_700Bold',
-  },
-  fontSizes: {
-    sm: 12,
-    base: 14,
-    lg: 16,
-    xl: 18,
-    '2xl': 24,
-    '3xl': 32,
-  },
-}
+} as const
