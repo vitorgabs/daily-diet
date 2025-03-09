@@ -6,6 +6,7 @@ import {
   NunitoSans_400Regular,
 } from '@expo-google-fonts/nunito-sans'
 
+import { Home } from './screens/home'
 import { defaultTheme } from './styles/themes/default-theme'
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
         barStyle="dark-content"
         translucent
       />
+      <Home />
     </ThemeProvider>
   )
 }
