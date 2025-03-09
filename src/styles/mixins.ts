@@ -8,7 +8,7 @@ export const mixins = {
     `,
     titleMd: css`
       font-family: 'NunitoSans_700Bold';
-      font-size: 24;
+      font-size: 24px;
     `,
     titleSm: css`
       font-family: 'NunitoSans_700Bold';
