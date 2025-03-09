@@ -1,24 +1,28 @@
-import { StatusBar } from 'expo-status-bar'
-import { Text } from 'react-native'
+import { StatusBar } from 'react-native'
 import { ThemeProvider } from 'styled-components'
-import styled from 'styled-components/native'
+import {
+  useFonts,
+  NunitoSans_700Bold,
+  NunitoSans_400Regular,
+} from '@expo-google-fonts/nunito-sans'
 
 import { defaultTheme } from './styles/themes/default-theme'
 
 export default function App() {
+  const [isFontsLoaded] = useFonts({
+    NunitoSans_700Bold,
+    NunitoSans_400Regular,
+  })
+
+  if (!isFontsLoaded) return null
+
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container>
-        <Text>Open up App.tsx to start working on your app!</Text>
-        <StatusBar style="auto" />
-      </Container>
+      <StatusBar
+        backgroundColor="transparent"
+        barStyle="dark-content"
+        translucent
+      />
     </ThemeProvider>
   )
 }
-
-const Container = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.colors.white};
-`
