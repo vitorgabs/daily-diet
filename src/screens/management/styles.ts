@@ -40,6 +40,12 @@ export const Input = styled.TextInput`
   padding: 0 14px;
 `
 
+export const ErrorMessage = styled.Text`
+  color: #E53935;
+  font-family: 'NunitoSans_400Regular';
+  font-size: 12px;
+`
+
 export const Wrapper = styled.View`
   gap: 4px;
 `

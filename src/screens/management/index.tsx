@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Keyboard, type TextInput } from 'react-native'
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
+import { useForm, Controller } from 'react-hook-form'
 import { format } from 'date-fns'
 
 import { Button } from '../../components/button'
@@ -12,6 +13,7 @@ import {
   Wrapper,
   Label,
   Input,
+  ErrorMessage,
   HorizontalWrapper,
   DateTimeWrapper,
   DateTimeButton,
@@ -22,14 +24,35 @@ import {
   Footer,
 } from './styles'
 
+interface FormData {
+  name: string
+  description: string
+  onDiet: boolean | undefined
+  consumedAt: Date | undefined
+}
+
 export function Management() {
-  const [onDiet, setOnDiet] = useState<boolean | undefined>(undefined)
-  const [date, setDate] = useState<Date | undefined>(undefined)
+  const {
+    control,
+    watch,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      name: '',
+      description: '',
+      onDiet: undefined,
+      consumedAt: undefined,
+    },
+  })
+
+  const consumedAt = watch('consumedAt')
 
   const currentDate = new Date()
 
-  const formattedDate = date ? format(date, 'dd/MM/yyyy') : ''
-  const formattedTime = date ? format(date, 'HH:mm') : ''
+  const formattedDate = consumedAt ? format(consumedAt, 'dd/MM/yyyy') : ''
+  const formattedTime = consumedAt ? format(consumedAt, 'HH:mm') : ''
 
   const descriptionInputRef = useRef<TextInput>(null)
 
@@ -40,10 +63,10 @@ export function Management() {
       mode,
       is24Hour: true,
       maximumDate: currentDate,
-      value: date ?? currentDate,
+      value: consumedAt ?? currentDate,
       onChange: (event, date) => {
         if (event.type === 'set' && date) {
-          setDate(date)
+          setValue('consumedAt', date, { shouldValidate: true })
         }
       },
     })
@@ -56,63 +79,113 @@ export function Management() {
       <Form keyboardShouldPersistTaps="handled">
         <Wrapper>
           <Label>Nome</Label>
-          <Input
-            returnKeyType="next"
-            onSubmitEditing={() => descriptionInputRef.current?.focus()}
+          <Controller
+            name="name"
+            control={control}
+            rules={{ required: 'Campo obrigatório' }}
+            render={({ field: { value, onChange } }) => (
+              <Input
+                returnKeyType="next"
+                value={value}
+                onChangeText={onChange}
+                onSubmitEditing={() => descriptionInputRef.current?.focus()}
+              />
+            )}
           />
+          {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
         </Wrapper>
 
         <Wrapper>
           <Label>Descrição</Label>
-          <Textarea
-            ref={descriptionInputRef}
-            multiline
-            style={{ textAlignVertical: 'top' }}
+          <Controller
+            name="description"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Textarea
+                multiline
+                ref={descriptionInputRef}
+                value={value}
+                onChangeText={onChange}
+                style={{ textAlignVertical: 'top' }}
+              />
+            )}
           />
         </Wrapper>
 
-        <HorizontalWrapper>
-          <DateTimeWrapper>
-            <Label>Data</Label>
-            <DateTimeButton onPress={() => openDateTimePicker('date')}>
-              <Input readOnly value={formattedDate} />
-            </DateTimeButton>
-          </DateTimeWrapper>
+        <Controller
+          name="consumedAt"
+          control={control}
+          rules={{ required: 'Campo obrigatório' }}
+          render={({ field: { value } }) => (
+            <HorizontalWrapper>
+              <DateTimeWrapper>
+                <Label>Data</Label>
+                <DateTimeButton onPress={() => openDateTimePicker('date')}>
+                  <Input readOnly value={formattedDate} />
+                </DateTimeButton>
+                {errors.consumedAt && (
+                  <ErrorMessage>{errors.consumedAt.message}</ErrorMessage>
+                )}
+              </DateTimeWrapper>
 
-          <DateTimeWrapper>
-            <Label>Hora</Label>
-            <DateTimeButton onPress={() => openDateTimePicker('time')}>
-              <Input readOnly value={formattedTime} />
-            </DateTimeButton>
-          </DateTimeWrapper>
-        </HorizontalWrapper>
+              <DateTimeWrapper>
+                <Label>Hora</Label>
+                <DateTimeButton onPress={() => openDateTimePicker('time')}>
+                  <Input readOnly value={formattedTime} />
+                </DateTimeButton>
+                {errors.consumedAt && (
+                  <ErrorMessage>{errors.consumedAt.message}</ErrorMessage>
+                )}
+              </DateTimeWrapper>
+            </HorizontalWrapper>
+          )}
+        />
 
         <Wrapper>
           <Label>Está dentro da dieta?</Label>
 
-          <HorizontalWrapper style={{ gap: 8, marginBottom: 16 }}>
-            <RadioButton
-              success
-              isChecked={onDiet}
-              onPress={() => setOnDiet(true)}
-            >
-              <StatusIndicator success />
-              <RadioLabel>Sim</RadioLabel>
-            </RadioButton>
+          <Controller
+            name="onDiet"
+            control={control}
+            rules={{
+              validate: (value) =>
+                value !== undefined || 'Selecione uma das opções',
+            }}
+            render={({ field: { value, onChange } }) => (
+              <>
+                <HorizontalWrapper style={{ gap: 8 }}>
+                  <RadioButton
+                    success
+                    isChecked={value === true}
+                    onPress={() => onChange(true)}
+                  >
+                    <StatusIndicator success />
+                    <RadioLabel>Sim</RadioLabel>
+                  </RadioButton>
 
-            <RadioButton
-              success={false}
-              isChecked={onDiet === false}
-              onPress={() => setOnDiet(false)}
-            >
-              <StatusIndicator success={false} />
-              <RadioLabel>Não</RadioLabel>
-            </RadioButton>
-          </HorizontalWrapper>
+                  <RadioButton
+                    success={false}
+                    isChecked={value === false}
+                    onPress={() => onChange(false)}
+                  >
+                    <StatusIndicator success={false} />
+                    <RadioLabel>Não</RadioLabel>
+                  </RadioButton>
+                </HorizontalWrapper>
+
+                {errors.onDiet && (
+                  <ErrorMessage>{errors.onDiet.message}</ErrorMessage>
+                )}
+              </>
+            )}
+          />
         </Wrapper>
 
         <Footer>
-          <Button title="Cadastrar refeição" />
+          <Button
+            title="Cadastrar refeição"
+            onPress={handleSubmit((data) => console.log(data))}
+          />
         </Footer>
       </Form>
     </Screen>

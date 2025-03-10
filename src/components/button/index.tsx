@@ -10,11 +10,17 @@ export interface ButtonProps extends PressableProps {
   variant?: 'solid' | 'outline'
 }
 
-export function Button({ title, icon: Icon, variant = 'solid' }: ButtonProps) {
+export function Button({
+  title,
+  icon: Icon,
+  variant = 'solid',
+  ...rest
+}: ButtonProps) {
   const { colors } = useTheme()
 
   return (
     <Container
+      {...rest}
       variant={variant}
       style={({ pressed }) => [
         {
