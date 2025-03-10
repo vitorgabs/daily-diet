@@ -8,6 +8,7 @@ type ContainerProps = Pick<ButtonProps, 'variant'>
 export const Container = styled.Pressable<ContainerProps>`
   border: ${({ theme, variant }) => (variant === 'solid' ? 0 : theme.colors.gray[700])} solid 1px;
   border-radius: 6px;
+  padding: 0 24px;
   flex-direction: row;
   align-items: center;
   justify-content: center;
