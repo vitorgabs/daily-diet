@@ -15,6 +15,7 @@ export function Button({ title, icon: Icon, variant = 'solid' }: ButtonProps) {
 
   return (
     <Container
+      variant={variant}
       style={({ pressed }) => [
         {
           backgroundColor:
