@@ -7,7 +7,7 @@ import { mixins } from '../../styles/mixins'
 const statusBarHeight =
   Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0
 
-export const Container = styled.View`
+export const Screen = styled.View`
   background-color: ${({ theme }) => theme.colors.gray[100]};
   padding: 24px;
   padding-top: ${24 + statusBarHeight}px;
@@ -54,30 +54,8 @@ export const CardIcon = styled(ArrowUpRight).attrs(({ theme }) => ({
 export const MealsText = styled.Text`
   ${mixins.fonts.bodyMd}
   color: ${({ theme }) => theme.colors.gray[700]};
-  margin-top: 40px;
+  margin: 40px 0 8px;
 `
-
-export const Button = styled.Pressable`
-  border-radius: 6px;
-  margin-top: 8px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-`
-
-export const ButtonTitle = styled.Text`
-  ${({ theme }) => css`
-    ${mixins.fonts.titleXs}
-    color: ${theme.colors.white};
-    padding-block: 16px;
-  `}
-`
-
-export const ButtonIcon = styled(Plus).attrs(({ theme }) => ({
-  size: 18,
-  color: theme.colors.white,
-}))``
 
 export const MealList = styled.SectionList.attrs(() => ({
   contentContainerStyle: { gap: 8 },
