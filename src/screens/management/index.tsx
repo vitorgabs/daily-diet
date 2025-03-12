@@ -1,11 +1,13 @@
 import { useRef } from 'react'
 import { Keyboard, type TextInput } from 'react-native'
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
+import { useNavigation, type StaticScreenProps } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import { format } from 'date-fns'
 
 import { Button } from '../../components/button'
 import { Header } from '../../components/header'
+import { type Meal, useStore } from '../../store/meal'
 
 import {
   Screen,
@@ -27,11 +29,16 @@ import {
 interface FormData {
   name: string
   description: string
-  onDiet: boolean | undefined
-  consumedAt: Date | undefined
+  onDiet: boolean
+  consumedAt: Date
 }
 
-export function Management() {
+type ScreenProps = StaticScreenProps<{ meal?: Meal }>
+
+export function Management({ route }: ScreenProps) {
+  const meal = route.params?.meal
+  const { navigate } = useNavigation()
+  const { storeMeal, updateMeal } = useStore()
   const {
     control,
     watch,
@@ -40,10 +47,10 @@ export function Management() {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      name: '',
-      description: '',
-      onDiet: undefined,
-      consumedAt: undefined,
+      name: meal?.name ?? '',
+      description: meal?.description ?? '',
+      onDiet: meal?.onDiet,
+      consumedAt: meal?.consumedAt,
     },
   })
 
@@ -57,7 +64,7 @@ export function Management() {
   const descriptionInputRef = useRef<TextInput>(null)
 
   function openDateTimePicker(mode: 'date' | 'time') {
-    Keyboard.dismiss()
+    if (Keyboard.isVisible()) Keyboard.dismiss()
 
     DateTimePickerAndroid.open({
       mode,
@@ -72,9 +79,25 @@ export function Management() {
     })
   }
 
+  async function handleSubmitForm(data: FormData) {
+    if (meal) {
+      await updateMeal({
+        id: meal.id,
+        ...data,
+      })
+    } else {
+      await storeMeal({
+        id: Date.now().toString(),
+        ...data,
+      })
+    }
+
+    navigate('Feedback', { onDiet: data.onDiet })
+  }
+
   return (
     <Screen>
-      <Header />
+      <Header title={meal ? 'Editar refeição' : 'Nova refeição'} />
 
       <Form keyboardShouldPersistTaps="handled">
         <Wrapper>
@@ -183,8 +206,8 @@ export function Management() {
 
         <Footer>
           <Button
-            title="Cadastrar refeição"
-            onPress={handleSubmit((data) => console.log(data))}
+            title={meal ? 'Salvar alterações' : 'Cadastrar refeição'}
+            onPress={handleSubmit(handleSubmitForm)}
           />
         </Footer>
       </Form>
