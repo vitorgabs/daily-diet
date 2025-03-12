@@ -1,3 +1,11 @@
+import {
+  CommonActions,
+  useNavigation,
+  type StaticScreenProps,
+} from '@react-navigation/native'
+
+import { Button } from '../../components/button'
+
 import happyFeedbackImage from '../../assets/images/keep-it-up.png'
 import sadFeedbackImage from '../../assets/images/what-a-shame.png'
 
@@ -9,16 +17,28 @@ import {
   Highlight,
   FeedbackImage,
 } from './styles'
-import { Button } from '../../components/button'
 
-export function Feedback() {
-  const onDiet = true
+type ScreenProps = StaticScreenProps<{ onDiet: boolean }>
+
+export function Feedback({ route }: ScreenProps) {
+  const navigation = useNavigation()
+  const { onDiet } = route.params
+
   const feedbackImage = onDiet ? happyFeedbackImage : sadFeedbackImage
   const title = onDiet ? 'Continue assim!' : 'Que pena!'
   const dietStatusText = onDiet ? 'dentro da dieta.' : 'saiu da dieta'
   const [initial, final] = onDiet
     ? ['Você continua', 'Muito bem!']
     : ['Você', 'dessa vez, mas continue se esforçando e não desista!']
+
+  function goToHome() {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      }),
+    )
+  }
 
   return (
     <Screen>
@@ -32,7 +52,7 @@ export function Feedback() {
 
       <FeedbackImage source={feedbackImage} />
 
-      <Button title="Ir para a página inicial" />
+      <Button title="Ir para a página inicial" onPress={goToHome} />
     </Screen>
   )
 }
