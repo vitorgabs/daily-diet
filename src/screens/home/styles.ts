@@ -20,8 +20,12 @@ export const Header = styled.View`
   justify-content: space-between;
 `
 
-export const DietInfoCard = styled.TouchableOpacity`
-  background-color: ${({ theme }) => theme.colors.green.light};
+type DietInfoCardProps = {
+  success: boolean
+}
+
+export const DietInfoCard = styled.TouchableOpacity<DietInfoCardProps>`
+  background-color: ${({ theme: { colors }, success }) => (success ? colors.green.light : colors.red.light)};
   border-radius: 8px;
   margin-top: 32px;
   padding: 20px 16px;
@@ -42,10 +46,15 @@ export const CardDescription = styled.Text`
     color: ${theme.colors.gray[600]};
   `}
 `
-export const CardIcon = styled(ArrowUpRight).attrs(({ theme }) => ({
-  size: 24,
-  color: theme.colors.green.dark,
-}))`
+
+type CardIconProps = { success: boolean }
+
+export const CardIcon = styled(ArrowUpRight).attrs<CardIconProps>(
+  ({ theme: { colors }, success }) => ({
+    color: success ? colors.green.dark : colors.red.dark,
+    size: 24,
+  }),
+)<CardIconProps>`
   position: absolute;
   top: 8px;
   right: 8px;
@@ -55,12 +64,6 @@ export const MealsText = styled.Text`
   ${mixins.fonts.bodyMd}
   color: ${({ theme }) => theme.colors.gray[700]};
   margin: 40px 0 8px;
-`
-
-export const MealList = styled.SectionList.attrs(() => ({
-  contentContainerStyle: { gap: 8 },
-}))`
-  margin-top: 32px;
 `
 
 export const SectionHeader = styled.Text`
