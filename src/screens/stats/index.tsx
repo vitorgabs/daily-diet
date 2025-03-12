@@ -1,4 +1,9 @@
+import { useNavigation } from '@react-navigation/native'
+
 import { StatsCard } from '../../components/stats-card'
+import { useDietStats } from '../../hooks/use-diet-stats'
+import { formatToDecimalPercentage } from '../../utils/formatters'
+
 import {
   Container,
   Content,
@@ -13,13 +18,25 @@ import {
 } from './styles'
 
 export function Stats() {
+  const navigation = useNavigation()
+  const {
+    healthyMealPercentage,
+    recordedMealCount,
+    healthyMealCount,
+    unhealthyMealCount,
+    bestHealthyMealSequence,
+    isHealthyDiet,
+  } = useDietStats()
+
   return (
-    <Container>
+    <Container isHealthyDiet={isHealthyDiet}>
       <Header>
-        <HeaderButton>
-          <HeaderIcon />
+        <HeaderButton onPress={() => navigation.goBack()}>
+          <HeaderIcon isHealthyDiet={isHealthyDiet} />
         </HeaderButton>
-        <HeaderTitle>90,86%</HeaderTitle>
+        <HeaderTitle>
+          {formatToDecimalPercentage(healthyMealPercentage)}
+        </HeaderTitle>
         <HeaderDescription>das refeições dentro da dieta</HeaderDescription>
       </Header>
 
@@ -27,15 +44,18 @@ export function Stats() {
         <Title>Estatíscas gerais</Title>
 
         <StatsCard
-          title="22"
+          title={`${bestHealthyMealSequence}`}
           description="melhor sequência de pratos dentro da dieta"
         />
-        <StatsCard title="109" description="refeições registradas" />
+        <StatsCard
+          title={`${recordedMealCount}`}
+          description="refeições registradas"
+        />
 
         <HorizontalWrapper>
           <Wrapper>
             <StatsCard
-              title="99"
+              title={`${healthyMealCount}`}
               description="refeições dentro da dieta"
               status="success"
             />
@@ -43,7 +63,7 @@ export function Stats() {
 
           <Wrapper>
             <StatsCard
-              title="10"
+              title={`${unhealthyMealCount}`}
               description="refeições fora da dieta"
               status="failure"
             />

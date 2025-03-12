@@ -6,14 +6,15 @@ import { mixins } from '../../styles/mixins'
 
 const statusBarHeight = Platform.OS === 'android' ? StatusBar.currentHeight : 0
 
-export const Container = styled.View`
-  padding-top: ${statusBarHeight};
-  background-color: ${({ theme }) => theme.colors.green.light};
+type ContainerProps = { isHealthyDiet: boolean }
+
+export const Container = styled.View<ContainerProps>`
+  padding-top: ${statusBarHeight}px;
+  background-color: ${({ theme: { colors }, isHealthyDiet }) => (isHealthyDiet ? colors.green.light : colors.red.light)};
   flex: 1;
 `
 
 export const Header = styled.View`
-  background-color: ${({ theme }) => theme.colors.green.light};
   position: relative;
   padding: 28px 0 34px;
   align-items: center;
@@ -25,11 +26,14 @@ export const HeaderButton = styled.TouchableOpacity`
   left: 24px;
 `
 
-export const HeaderIcon = styled(ArrowLeft).attrs(({ theme }) => ({
-  color: theme.colors.green.dark,
-  size: 24,
-}))`
-`
+type HeaderIconProps = { isHealthyDiet: boolean }
+
+export const HeaderIcon = styled(ArrowLeft).attrs<HeaderIconProps>(
+  ({ theme: { colors }, isHealthyDiet }) => ({
+    color: isHealthyDiet ? colors.green.dark : colors.red.dark,
+    size: 24,
+  }),
+)<HeaderIconProps>``
 
 export const HeaderTitle = styled.Text`
   ${mixins.fonts.titleLg}
