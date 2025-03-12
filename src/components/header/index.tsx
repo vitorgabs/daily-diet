@@ -1,13 +1,21 @@
+import { useNavigation } from '@react-navigation/native'
+
 import { ArrowLeftIcon, BackButton, Container, Title } from './styles'
 
-export function Header() {
+interface HeaderProps {
+  title: string
+}
+
+export function Header({ title }: HeaderProps) {
+  const navigation = useNavigation()
+
   return (
     <Container>
-      <BackButton>
+      <BackButton onPress={() => navigation.goBack()}>
         <ArrowLeftIcon />
       </BackButton>
 
-      <Title>Refeição</Title>
+      <Title>{title}</Title>
     </Container>
   )
 }
