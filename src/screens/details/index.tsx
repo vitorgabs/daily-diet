@@ -1,7 +1,11 @@
+import { useNavigation } from '@react-navigation/native'
+import type { StaticScreenProps } from '@react-navigation/native'
 import { PencilSimpleLine, Trash } from 'phosphor-react-native'
+import { format } from 'date-fns'
 
 import { Header } from '../../components/header'
 import { Button } from '../../components/button'
+import type { Meal as MealType } from '../../store/meal'
 
 import {
   Screen,
@@ -12,38 +16,50 @@ import {
   DateAndTime,
   Description,
   Badge,
-  BadgeIcon,
+  Status,
   BadgeText,
   Footer,
 } from './styles'
 
-export function Details() {
+type ScreenProps = StaticScreenProps<{ meal: MealType }>
+
+export function Details({ route }: ScreenProps) {
+  const meal = route.params.meal
+  const { name, description, consumedAt, onDiet } = meal
+  const { navigate } = useNavigation()
+
+  const formattedDateTime = format(consumedAt, "dd/MM/yyyy 'às' HH:mm")
+
   return (
-    <Screen>
-      <Header />
+    <Screen success={onDiet}>
+      <Header title="Refeição" />
 
       <Content>
         <Info>
           <Wrapper>
-            <Meal>Sanduíche</Meal>
-            <Description>
-              Sanduíche de pão integral com atum e salada de alface e tomate
-            </Description>
+            <Meal>{name}</Meal>
+            {description && <Description>{description}</Description>}
           </Wrapper>
 
           <Wrapper>
             <DateAndTime>Data e hora</DateAndTime>
-            <Description>12/08/2022 às 16:00</Description>
+            <Description>{formattedDateTime}</Description>
           </Wrapper>
 
           <Badge>
-            <BadgeIcon />
-            <BadgeText>dentro da dieta</BadgeText>
+            <Status success={onDiet} />
+            <BadgeText>
+              {onDiet ? 'dentro da dieta' : 'fora da dieta'}
+            </BadgeText>
           </Badge>
         </Info>
 
         <Footer>
-          <Button title="Editar refeição" icon={PencilSimpleLine} />
+          <Button
+            title="Editar refeição"
+            icon={PencilSimpleLine}
+            onPress={() => navigate('Management', { meal })}
+          />
           <Button title="Excluir refeição" icon={Trash} variant="outline" />
         </Footer>
       </Content>
