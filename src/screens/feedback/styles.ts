@@ -16,12 +16,12 @@ export const Header = styled.View`
 `
 
 interface TitleProps {
-  onDiet: boolean
+  success: boolean
 }
 
 export const Title = styled.Text<TitleProps>`
   ${mixins.fonts.titleMd}
-  color: ${({ theme, onDiet }) => (onDiet ? theme.colors.green.dark : theme.colors.red.dark)};
+  color: ${({ theme, success }) => (success ? theme.colors.green.dark : theme.colors.red.dark)};
 `
 
 export const Description = styled.Text`

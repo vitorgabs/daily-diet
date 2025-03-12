@@ -25,13 +25,13 @@ type ScreenProps = StaticScreenProps<{ meal: MealType }>
 
 export function Details({ route }: ScreenProps) {
   const meal = route.params.meal
-  const { name, description, consumedAt, onDiet } = meal
+  const { name, description, consumedAt, isHealthy } = meal
   const { navigate } = useNavigation()
 
   const formattedDateTime = format(consumedAt, "dd/MM/yyyy 'às' HH:mm")
 
   return (
-    <Screen success={onDiet}>
+    <Screen success={isHealthy}>
       <Header title="Refeição" />
 
       <Content>
@@ -47,9 +47,9 @@ export function Details({ route }: ScreenProps) {
           </Wrapper>
 
           <Badge>
-            <Status success={onDiet} />
+            <Status success={isHealthy} />
             <BadgeText>
-              {onDiet ? 'dentro da dieta' : 'fora da dieta'}
+              {isHealthy ? 'dentro da dieta' : 'fora da dieta'}
             </BadgeText>
           </Badge>
         </Info>

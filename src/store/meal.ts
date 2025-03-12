@@ -5,7 +5,7 @@ export interface Meal {
   name: string
   description: string
   consumedAt: Date
-  onDiet: boolean
+  isHealthy: boolean
 }
 
 const RECORDED_MEALS_KEY = '@daily-diet:meals'
@@ -35,7 +35,7 @@ async function storeMeal(newMeal: Meal) {
       JSON.stringify([newMeal, ...meals]),
     )
 
-    await storeHealthyMealSequences(newMeal.onDiet)
+    await storeHealthyMealSequences(newMeal.isHealthy)
   } catch {
     console.log('Erro ao salvar refeição')
   }

@@ -18,16 +18,16 @@ import {
   FeedbackImage,
 } from './styles'
 
-type ScreenProps = StaticScreenProps<{ onDiet: boolean }>
+type ScreenProps = StaticScreenProps<{ withinTheDiet: boolean }>
 
 export function Feedback({ route }: ScreenProps) {
   const navigation = useNavigation()
-  const { onDiet } = route.params
+  const { withinTheDiet } = route.params
 
-  const feedbackImage = onDiet ? happyFeedbackImage : sadFeedbackImage
-  const title = onDiet ? 'Continue assim!' : 'Que pena!'
-  const dietStatusText = onDiet ? 'dentro da dieta.' : 'saiu da dieta'
-  const [initial, final] = onDiet
+  const feedbackImage = withinTheDiet ? happyFeedbackImage : sadFeedbackImage
+  const title = withinTheDiet ? 'Continue assim!' : 'Que pena!'
+  const dietStatusText = withinTheDiet ? 'dentro da dieta.' : 'saiu da dieta'
+  const [initial, final] = withinTheDiet
     ? ['Você continua', 'Muito bem!']
     : ['Você', 'dessa vez, mas continue se esforçando e não desista!']
 
@@ -43,7 +43,7 @@ export function Feedback({ route }: ScreenProps) {
   return (
     <Screen>
       <Header>
-        <Title onDiet={onDiet}>{title}</Title>
+        <Title success={withinTheDiet}>{title}</Title>
 
         <Description>
           {initial} <Highlight>{dietStatusText}</Highlight> {final}

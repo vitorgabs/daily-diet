@@ -29,7 +29,7 @@ import {
 interface FormData {
   name: string
   description: string
-  onDiet: boolean
+  isHealthy: boolean
   consumedAt: Date
 }
 
@@ -49,7 +49,7 @@ export function Management({ route }: ScreenProps) {
     defaultValues: {
       name: meal?.name ?? '',
       description: meal?.description ?? '',
-      onDiet: meal?.onDiet,
+      isHealthy: meal?.isHealthy,
       consumedAt: meal?.consumedAt,
     },
   })
@@ -92,7 +92,7 @@ export function Management({ route }: ScreenProps) {
       })
     }
 
-    navigate('Feedback', { onDiet: data.onDiet })
+    navigate('Feedback', { withinTheDiet: data.isHealthy })
   }
 
   return (
@@ -139,7 +139,7 @@ export function Management({ route }: ScreenProps) {
           name="consumedAt"
           control={control}
           rules={{ required: 'Campo obrigatório' }}
-          render={({ field: { value } }) => (
+          render={() => (
             <HorizontalWrapper>
               <DateTimeWrapper>
                 <Label>Data</Label>
@@ -168,7 +168,7 @@ export function Management({ route }: ScreenProps) {
           <Label>Está dentro da dieta?</Label>
 
           <Controller
-            name="onDiet"
+            name="isHealthy"
             control={control}
             rules={{
               validate: (value) =>
@@ -196,8 +196,8 @@ export function Management({ route }: ScreenProps) {
                   </RadioButton>
                 </HorizontalWrapper>
 
-                {errors.onDiet && (
-                  <ErrorMessage>{errors.onDiet.message}</ErrorMessage>
+                {errors.isHealthy && (
+                  <ErrorMessage>{errors.isHealthy.message}</ErrorMessage>
                 )}
               </>
             )}
