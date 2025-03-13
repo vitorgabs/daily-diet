@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { type Meal, useStore } from '../store/meal'
 
-export function useDietStats() {
+export function useDiet() {
   const [meals, setMeals] = useState([] as Meal[])
   const [bestHealthyMealSequence, setBestHealthyMealSequence] = useState(0)
   const { fetchMeals, fetchBestHealthyMealSequence } = useStore()
@@ -20,13 +20,13 @@ export function useDietStats() {
 
   const { healthyMealCount, unhealthyMealCount } = meals.reduce(
     (acc, meal) => ({
-      healthyMealCount: acc.healthyMealCount + (meal.onDiet ? 1 : 0),
-      unhealthyMealCount: acc.unhealthyMealCount + (meal.onDiet ? 0 : 1),
+      healthyMealCount: acc.healthyMealCount + (meal.isHealthy ? 1 : 0),
+      unhealthyMealCount: acc.unhealthyMealCount + (meal.isHealthy ? 0 : 1),
     }),
     { healthyMealCount: 0, unhealthyMealCount: 0 },
   )
 
-  const healthyMealPercentage = (healthyMealCount * 100) / meals.length || 0
+  const healthyMealPercentage = (healthyMealCount * 100) / meals.length
   const recordedMealCount = meals.length
   const isHealthyDiet = healthyMealPercentage > 50
 

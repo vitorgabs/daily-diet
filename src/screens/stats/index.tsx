@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 
 import { StatsCard } from '../../components/stats-card'
-import { useDietStats } from '../../hooks/use-diet-stats'
+import { useDiet } from '../../hooks/use-diet'
 import { formatToDecimalPercentage } from '../../utils/formatters'
 
 import {
@@ -26,7 +26,7 @@ export function Stats() {
     unhealthyMealCount,
     bestHealthyMealSequence,
     isHealthyDiet,
-  } = useDietStats()
+  } = useDiet()
 
   return (
     <Container isHealthyDiet={isHealthyDiet}>

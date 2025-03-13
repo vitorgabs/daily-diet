@@ -8,7 +8,7 @@ import { Button } from '../../components/button'
 import { Meal } from '../../components/meal'
 import { type Meal as MealType, useStore } from '../../store/meal'
 
-import { useDietStats } from '../../hooks/use-diet-stats'
+import { useDiet } from '../../hooks/use-diet'
 import { formatToDecimalPercentage } from '../../utils/formatters'
 
 import Logo from '../../assets/logo.svg'
@@ -29,7 +29,7 @@ export function Home() {
   const [meals, setMeals] = useState([] as MealType[])
   const { navigate } = useNavigation()
   const { fetchMeals } = useStore()
-  const { healthyMealPercentage, isHealthyDiet } = useDietStats()
+  const { healthyMealPercentage, isHealthyDiet } = useDiet()
 
   const sections = meals.reduce<{ title: string; data: MealType[] }[]>(
     (acc, meal) => {
