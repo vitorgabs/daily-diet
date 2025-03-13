@@ -72,3 +72,30 @@ export const Footer = styled.View`
   margin-top: auto;
   gap: 8px;
 `
+
+export const ModalBackground = styled.View`
+  background-color: rgba(0, 0, 0, 0.25);
+  padding: 24px;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`
+
+export const ModalContent = styled.View`
+  background-color: ${({ theme }) => theme.colors.gray[100]};
+  border-radius: 8px;
+  padding: 40px 24px 24px;
+  align-items: center;
+  gap: 32px;
+`
+
+export const ModalTitle = styled.Text`
+  ${mixins.fonts.titleSm}
+  color: ${({ theme }) => theme.colors.gray[600]};
+  text-align: center;
+`
+
+export const ModalFooter = styled.View`
+  flex-direction: row;
+  gap: 12px;
+`

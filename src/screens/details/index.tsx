@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { Modal } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import type { StaticScreenProps } from '@react-navigation/native'
 import { PencilSimpleLine, Trash } from 'phosphor-react-native'
@@ -5,7 +7,7 @@ import { format } from 'date-fns'
 
 import { Header } from '../../components/header'
 import { Button } from '../../components/button'
-import type { Meal as MealType } from '../../store/meal'
+import { useStore, type Meal as MealType } from '../../store/meal'
 
 import {
   Screen,
@@ -19,16 +21,41 @@ import {
   Status,
   BadgeText,
   Footer,
+  ModalBackground,
+  ModalContent,
+  ModalTitle,
+  ModalFooter,
 } from './styles'
 
-type ScreenProps = StaticScreenProps<{ meal: MealType }>
+type ScreenProps = StaticScreenProps<{ mealId: string }>
 
 export function Details({ route }: ScreenProps) {
-  const meal = route.params.meal
-  const { name, description, consumedAt, isHealthy } = meal
+  const { mealId } = route.params
   const { navigate } = useNavigation()
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [meal, setMeal] = useState<MealType>()
+  const { deleteMeal, fetchMeal } = useStore()
 
-  const formattedDateTime = format(consumedAt, "dd/MM/yyyy 'às' HH:mm")
+  const isHealthy = meal?.isHealthy ?? false
+
+  const formattedDateTime = meal
+    ? format(meal?.consumedAt, "dd/MM/yyyy 'às' HH:mm")
+    : 'Data indisponível'
+
+  async function handleDeleteMeal() {
+    await deleteMeal(mealId)
+    setIsModalVisible(false)
+    navigate('Home')
+  }
+
+  useEffect(() => {
+    async function loadMealDetails() {
+      const meal = await fetchMeal(mealId)
+      setMeal(meal)
+    }
+
+    loadMealDetails()
+  }, [fetchMeal, mealId])
 
   return (
     <Screen success={isHealthy}>
@@ -37,8 +64,8 @@ export function Details({ route }: ScreenProps) {
       <Content>
         <Info>
           <Wrapper>
-            <Meal>{name}</Meal>
-            {description && <Description>{description}</Description>}
+            <Meal>{meal?.name}</Meal>
+            {meal?.description && <Description>{meal.description}</Description>}
           </Wrapper>
 
           <Wrapper>
@@ -58,11 +85,41 @@ export function Details({ route }: ScreenProps) {
           <Button
             title="Editar refeição"
             icon={PencilSimpleLine}
-            onPress={() => navigate('Management', { meal })}
+            onPress={() => navigate('Management', { mealId })}
           />
-          <Button title="Excluir refeição" icon={Trash} variant="outline" />
+          <Button
+            title="Excluir refeição"
+            icon={Trash}
+            variant="outline"
+            onPress={() => setIsModalVisible(true)}
+          />
         </Footer>
       </Content>
+
+      <Modal
+        transparent
+        statusBarTranslucent
+        animationType="fade"
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <ModalBackground>
+          <ModalContent>
+            <ModalTitle>
+              Deseja realmente exluir o registro da refeição?
+            </ModalTitle>
+
+            <ModalFooter>
+              <Button
+                title="Cancelar"
+                variant="outline"
+                onPress={() => setIsModalVisible(false)}
+              />
+              <Button title="Sim, excluir" onPress={handleDeleteMeal} />
+            </ModalFooter>
+          </ModalContent>
+        </ModalBackground>
+      </Modal>
     </Screen>
   )
 }
