@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Keyboard, type TextInput } from 'react-native'
 import { useNavigation, type StaticScreenProps } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import { format } from 'date-fns'
 
 import { Button } from '../../components/button'
@@ -37,6 +37,8 @@ type ScreenProps = StaticScreenProps<{ mealId?: string }>
 
 export function Management({ route }: ScreenProps) {
   const [meal, setMeal] = useState<Meal>()
+  const [pickerMode, setPickerMode] = useState<'date' | 'time'>()
+  const [showPicker, setShowPicker] = useState(false)
   const { mealId } = route.params
   const { navigate } = useNavigation()
   const { storeMeal, updateMeal, fetchMeal } = useStore()
@@ -68,17 +70,8 @@ export function Management({ route }: ScreenProps) {
   function openDateTimePicker(mode: 'date' | 'time') {
     if (Keyboard.isVisible()) Keyboard.dismiss()
 
-    DateTimePickerAndroid.open({
-      mode,
-      is24Hour: true,
-      maximumDate: currentDate,
-      value: consumedAt ?? currentDate,
-      onChange: (event, date) => {
-        if (event.type === 'set' && date) {
-          setValue('consumedAt', date, { shouldValidate: true })
-        }
-      },
-    })
+    setPickerMode(mode)
+    setShowPicker(true)
   }
 
   async function handleSubmitForm(data: FormData) {
@@ -231,6 +224,21 @@ export function Management({ route }: ScreenProps) {
           />
         </Footer>
       </Form>
+
+      {showPicker && (
+        <DateTimePicker
+          is24Hour
+          mode={pickerMode}
+          maximumDate={currentDate}
+          value={consumedAt ?? currentDate}
+          onChange={(event, date) => {
+            if (event.type === 'set' && date) {
+              setValue('consumedAt', date, { shouldValidate: true })
+            }
+            setShowPicker(false)
+          }}
+        />
+      )}
     </Screen>
   )
 }
