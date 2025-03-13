@@ -27,6 +27,22 @@ async function fetchMeals() {
   }
 }
 
+async function fetchMeal(id: string) {
+  try {
+    const meals = await fetchMeals()
+    const data = meals.find((meal) => meal.id === id) as Meal
+
+    const meal: Meal = {
+      ...data,
+      consumedAt: new Date(data.consumedAt),
+    }
+
+    return meal
+  } catch (error) {
+    console.log('Erro ao buscar detalhes da refeição')
+  }
+}
+
 async function storeMeal(newMeal: Meal) {
   try {
     const meals = await fetchMeals()
@@ -109,9 +125,22 @@ async function updateMeal(data: Meal) {
   }
 }
 
+async function deleteMeal(id: string) {
+  try {
+    const meals = await fetchMeals()
+    const mealsUpdated = meals.filter((meal) => meal.id !== id)
+
+    await AsyncStorage.setItem(RECORDED_MEALS_KEY, JSON.stringify(mealsUpdated))
+  } catch (error) {
+    console.log('Erro ao deletar refeição')
+  }
+}
+
 export const useStore = () => ({
   storeMeal,
   fetchMeals,
+  fetchMeal,
   updateMeal,
+  deleteMeal,
   fetchBestHealthyMealSequence,
 })
