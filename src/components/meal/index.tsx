@@ -9,7 +9,7 @@ import { Container, Time, Separator, Description, Status } from './styles'
 type MealProps = MealType
 
 export function Meal(props: MealProps) {
-  const { name, onDiet, consumedAt } = props
+  const { name, isHealthy, consumedAt, id } = props
   const { navigate } = useNavigation()
   const { colors } = useTheme()
 
@@ -17,7 +17,7 @@ export function Meal(props: MealProps) {
 
   return (
     <Container
-      onPress={() => navigate('Details', { meal: props })}
+      onPress={() => navigate('Details', { mealId: id })}
       style={({ pressed }) => [
         { backgroundColor: pressed ? colors.gray[200] : 'transparent' },
       ]}
@@ -25,7 +25,7 @@ export function Meal(props: MealProps) {
       <Time>{formattedTime}</Time>
       <Separator />
       <Description>{name}</Description>
-      <Status success={onDiet} />
+      <Status success={isHealthy} />
     </Container>
   )
 }

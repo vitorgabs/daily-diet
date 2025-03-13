@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Keyboard, type TextInput } from 'react-native'
 import { useNavigation, type StaticScreenProps } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
@@ -33,17 +33,19 @@ interface FormData {
   consumedAt: Date
 }
 
-type ScreenProps = StaticScreenProps<{ meal?: Meal }>
+type ScreenProps = StaticScreenProps<{ mealId?: string }>
 
 export function Management({ route }: ScreenProps) {
-  const meal = route.params?.meal
+  const [meal, setMeal] = useState<Meal>()
+  const { mealId } = route.params
   const { navigate } = useNavigation()
-  const { storeMeal, updateMeal } = useStore()
+  const { storeMeal, updateMeal, fetchMeal } = useStore()
   const {
     control,
     watch,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
@@ -94,6 +96,24 @@ export function Management({ route }: ScreenProps) {
 
     navigate('Feedback', { withinTheDiet: data.isHealthy })
   }
+
+  useEffect(() => {
+    async function loadMealData() {
+      if (!mealId) return
+
+      const meal = await fetchMeal(mealId)
+      setMeal(meal)
+
+      reset({
+        name: meal?.name,
+        description: meal?.description,
+        isHealthy: meal?.isHealthy,
+        consumedAt: meal?.consumedAt,
+      })
+    }
+
+    loadMealData()
+  }, [mealId, fetchMeal, reset])
 
   return (
     <Screen>

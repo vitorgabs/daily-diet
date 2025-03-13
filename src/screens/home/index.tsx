@@ -82,7 +82,7 @@ export function Home() {
       <MealsText>Refeições</MealsText>
 
       <Button
-        onPress={() => navigate('Management', { meal: undefined })}
+        onPress={() => navigate('Management', { mealId: undefined })}
         title="Nova refeição"
         icon={Plus}
       />
