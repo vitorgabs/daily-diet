@@ -26,7 +26,7 @@ export function useDiet() {
     { healthyMealCount: 0, unhealthyMealCount: 0 },
   )
 
-  const healthyMealPercentage = (healthyMealCount * 100) / meals.length
+  const healthyMealPercentage = (healthyMealCount * 100) / meals.length || 0
   const recordedMealCount = meals.length
   const isHealthyDiet = healthyMealPercentage > 50
 
